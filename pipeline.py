@@ -6,6 +6,7 @@ if not os.path.isdir("Genomes"): #make a directory to store genomes if it doesn'
 origseqs = ["GCF_014961145.1_ASM1496114v1_genomic.fna","GCF_028532485.1_ASM2853248v1_genomic.fna","GCF_021391435.1_ASM2139143v1_genomic.fna","GCF_004379335.1_ASM437933v1_genomic.fna"]
 
 #add code to download sequences
+
 #test
 
 #add code to insert repetitive elements
