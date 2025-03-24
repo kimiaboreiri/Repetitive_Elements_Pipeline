@@ -42,11 +42,6 @@ for genomefile in genomes:
 
 for length in motif_lengths:
     motif = "ATGC" * (length // 4 )         #for making a motif with 100 bp length we need to multiple 4 bases 25 times
-    
-
-
-
-
 
 
 simgenomes = []
