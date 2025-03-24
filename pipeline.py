@@ -3,11 +3,25 @@ import os
 if not os.path.isdir("Genomes"): #make a directory to store genomes if it doesn't already exist
     os.system("mkdir Genomes")
 
-origseqs = ["GCF_014961145.1_ASM1496114v1_genomic.fna","GCF_028532485.1_ASM2853248v1_genomic.fna","GCF_021391435.1_ASM2139143v1_genomic.fna","GCF_004379335.1_ASM437933v1_genomic.fna"]
+origseqs = ["GCF_014961145.1_ASM1496114v1_genomic.fna","GCF_028532485.1_ASM2853248v1_genomic.fna","GCF_021391435.1_ASM2139143v1_genomic.fna","GCF_004379335.1_ASM437933v1_genomic.fna"] #list of what the genome files should download as
+origseqcount = 0 #keeps track of which sequence file when checking downloads
+accession = ["GCF_014961145.1","GCF_028532485.1","GCF_021391435.1","GCF_004379335.1"] #genome accession codes
 
+for x in accession: #loop through accessions
+    if origseqs[origseqcount] not in os.listdir("Genomes"): #the order of the files listed above is the same as the order of the accessions, so check if the file has already been downloaded before calling the accession code
+        os.system(f"datasets download genome accession {x} --include genome") #download genome from refseq
+        os.system("unzip ncbi_dataset.zip") #unzip
+        os.system("rm ncbi_dataset.zip") #delete zip file which has generic name to prevent overwrite issues
+        os.system("mv ncbi_dataset/data/GCF*/GCF* Genomes") #extract the genome file and move it to Genomes folder
+        os.system("rm -rf ncbi_dataset/data") #delete the unzipped folder which has unnecessary extra stuff
+        os.system("rm README.md") #delete extra file to avoid asking for overwrite
+        os.system("rm md5sum.txt") #delete extra file to avoid asking for overwrite
+        os.system("rmdir ncbi_dataset") #remove empty folder
+    origseqcount += 1 #keep track of the file you are on
+
+    
 #add code to download sequences
 
-#test
 
 #add code to insert repetitive elements
 #add code to insert repetitive elements
