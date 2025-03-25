@@ -23,8 +23,9 @@ for x in accession: #loop through accessions
 
 #add code to insert repetitive elements
 
-#make file for modified genomes
-os.makedirs("ModifiedGenomes")
+#make directory for modified genomes
+if not os.path.isdir("ModifiedGenomes"):
+    os.makedirs("ModifiedGenomes")
 
 #for the intial testing,we are only using motif lengths of 100pb and 500bp
 #to confirm everything works before expanding to all lengths(100, 200, 300,400, 500)
@@ -66,12 +67,13 @@ if not os.path.isdir("artgens"): #directory for simulated genomes
     os.system("mkdir artgens") #create directory if it doesn't exist
 os.chdir("artgens") #move to that directory
 
-for gen in simgenomes:
+for gen in genomes:
     #for depth in range(10,110,10): #increase depth from 10 to 100 in increments of 10
     for depth in [10,100]: #runs art with depth of 10 and 100
-        out = gen.split("_")[0] + "_" + gen.split("_")[1] + "_" + depth
+        out = str(gen.split("_")[0]) + "_" + str(gen.split("_")[1]) + "_" + str(depth)
         #art flags: -i = input, -l = read length, -f = fold coverage, -o = output prefix, -m = mean fragment length, -s = standard deviation
-        os.system("art_illumina -i {0} -l 151 -f {1} -o {2}".format(gen,depth,out))
+        if not os.path.isfile("{}.fq".format(out)):
+            os.system("art_illumina -i ../Genomes/{0} -l 151 -f {1} -o {2}".format(gen,depth,out))
 
 #add code to run spades
 os.chdir("..") #exit the artgens directory
