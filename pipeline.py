@@ -20,12 +20,9 @@ for x in accession: #loop through accessions
     origseqcount += 1 #keep track of the file you are on
 
     
-#add code to download sequences
-
 
 #add code to insert repetitive elements
-#add code to insert repetitive elements
-import os
+
 #make file for modified genomes
 os.makedirs("ModifiedGenomes")
 
@@ -35,12 +32,16 @@ motif_lengths = [100, 500]
 repeat_count = [2, 3, 4, 5]
 
 ##original genomes list
-genomes = [
+genomes = []
+for file in os.listdir("Genomes"):
+    genomes.append(file)
+
+'''genomes = [
     "GCF_014961145.1_ASM1496114v1_genomic.fna",
     "GCF_028532485.1_ASM2853248v1_genomic.fna",
     "GCF_021391435.1_ASM2139143v1_genomic.fna",
     "GCF_004379335.1_ASM437933v1_genomic.fna"
-]
+]'''
 
 #Read the sequence
 #loop over each genome file in the genomes list
@@ -65,10 +66,12 @@ if not os.path.isdir("artgens"): #directory for simulated genomes
     os.system("mkdir artgens") #create directory if it doesn't exist
 os.chdir("artgens") #move to that directory
 
-for genome in simgenomes:
-    for coverage in range(10,110,10): #increase coverage from 10 to 100 in increments of 10
+for gen in simgenomes:
+    #for depth in range(10,110,10): #increase depth from 10 to 100 in increments of 10
+    for depth in [10,100]: #runs art with depth of 10 and 100
+        out = gen.split("_")[0] + "_" + gen.split("_")[1] + "_" + depth
         #art flags: -i = input, -l = read length, -f = fold coverage, -o = output prefix, -m = mean fragment length, -s = standard deviation
-        os.system("art_illumina -i {0} -l 151 -f {1} -o {2}".format(genome,coverage,out))
+        os.system("art_illumina -i {0} -l 151 -f {1} -o {2}".format(gen,depth,out))
 
 #add code to run spades
 os.chdir("..") #exit the artgens directory
