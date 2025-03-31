@@ -1,5 +1,5 @@
 import os
-
+#test
 if not os.path.isdir("Genomes"): #make a directory to store genomes if it doesn't already exist
     os.system("mkdir Genomes")
 
