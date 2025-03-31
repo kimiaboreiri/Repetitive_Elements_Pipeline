@@ -65,4 +65,66 @@ os.chdir("..") #exit the artgens directory
 for name in os.listdir("artgens"): #assemble every simulated genome in the artgens directory
     os.system("spades.py -k 77 --careful -1 {0}_1.fastq -2 {0}_2.fastq -o {0}_assembly/".format(name))
 
-#add code to run unicycler
+import os
+import subprocess
+##directory to input files
+input_dir = "/home/project3/artgens"
+
+#making output file
+output = "/home/project3/spades_output"
+os.makedirs(output, exist_ok=True)
+
+#raed1 files in input directory 
+fq_files_read1 = []
+for f in os.listdir(input_dir):
+    if f.endswith('1.fq'):
+        fq_files_read1.append(f)
+
+#run SPAdes for each file
+for fq1 in fq_files_read1:
+    fq2 = fq1.replace('1.fq', '2.fq')
+
+    fq1_path = os.path.join(input_dir, fq1)
+    fq2_path = os.path.join(input_dir, fq2)
+    
+    #name for output
+    base = fq1.replace('1.fq', '')
+    outdir = os.path.join(output, base)
+    os.makedirs(outdir, exist_ok=True)
+    
+
+    #run SPAdes
+    subprocess.run(["spades.py", "-1", fq1_path, "-2", fq2_path, "-o", outdir])
+    print(f"finish:{fq1} and {fq2} output in {outdir}")
+
+
+
+
+import os
+import subprocess
+
+input_dir = "/home/project3/artgens"
+output_dir = "/home/project3/unicycler_output"
+os.makedirs(output_dir, exist_ok=True)
+
+#forward read path
+
+fq1_files =[]
+for f in os.listdir(input_dir):
+    if f.endswith('1.fq'):
+        fq1_files.append(f)
+
+for fq1 in fq1_files:
+    fq2 = fq1.replace('1.fq', '2.fq')
+
+    
+    fq1_files_path = os.path.join(input_dir, fq1)
+    fq2_files_path = os.path.join(input_dir, fq2)
+
+    base1 = fq1.replace('1.fq', '')
+    outdir1 = os.path.join(output_dir, base1)
+    os.makedirs(outdir1, exist_ok=True)
+
+##running unicycler
+    subprocess.run(["unicycler", "-1", fq1_files_path, "-2", fq2_files_path, "-o", outdir1])
+    print(f"unicycler finished")
