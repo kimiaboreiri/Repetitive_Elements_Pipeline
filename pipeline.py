@@ -4,7 +4,7 @@ if not os.path.isdir("Genomes"): #make a directory to store genomes if it doesn'
     os.system("mkdir Genomes")
 
 accession = ["GCF_014961145.1","GCF_028532485.1","GCF_021391435.1","GCF_004379335.1"] #genome accession codes
-#test again
+
 for x in accession: #loop through accessions
     if x not in ",".join(os.listdir("Genomes")): #no need to redownload
         os.system(f"datasets download genome accession {x} --include genome") #download genome from refseq
