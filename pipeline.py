@@ -72,8 +72,6 @@ for gen in genomes:
         if not os.path.isfile("{}.fq".format(out)):
             os.system("art_illumina -p -na -i ../Genomes/{0} -l 151 -m 200 -s 10 -f {1} -o {2}".format(gen,depth,out))
 
-'''import os
-import os
 import subprocess
 ##directory to input files
 input_dir = "/home/project3/artgens"
@@ -107,9 +105,6 @@ for fq1 in fq_files_read1:
 
 
 
-'''
-import os
-import subprocess
 
 input_dir = "/home/project3/artgens"
 output_dir = "/home/project3/unicycler_output"
