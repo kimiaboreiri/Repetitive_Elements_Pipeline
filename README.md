@@ -1,5 +1,5 @@
 # Repetitive_Elements_Pipeline
-This pipeline is implemented in the Python programming language. The purpose of the pipeline is to insert repetitive elements into genomes, break them apart into short reads, and then reassemble them to test the ability of the assemblers to deal with repetitive elements. 
+This pipeline is implemented in the Python programming language. The purpose of the pipeline is to insert repetitive elements into genomes, break them apart into short reads, and then reassemble them to test the ability of the assemblers to deal with repetitive elements. This pipeline was created by Hillary Dapsauski, Kimia Boreiri, and Joshua Melnick.
 
 
 ## Required Dependencies 
@@ -24,3 +24,12 @@ git clone https://github.com/h-dapsauski/Repetitive_Elements_Pipeline.git
 cd Repetitive_Elements_Pipeline
 python3 pipeline.py
 ```
+
+## Pipeline steps
+The pipeline begins by downloading the genomes from RefSeq if they have not already been downloaded. 
+
+Next, repetitive elements are inserted into the pipeline to create artificial genomes. 
+
+The artificial genomes are broken apart by ART as it simulates 150 bp paired end short reads from an Illumina sequencer. It does this at a depth of 10 and 100, but these values can be modified. 
+
+The short reads are then reassembled by SPAdes and Unicycler to compare their ability to handle repetitive elements.
