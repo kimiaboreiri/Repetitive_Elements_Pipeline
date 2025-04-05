@@ -9,6 +9,8 @@ To untilize and run the pipeline, install the following dependencies and ensure 
 - **ART** - [Download](https://www.niehs.nih.gov/research/resources/software/biostatistics/art) - use the MountRainier version 
 - **SPAdes** - [GitHub](https://github.com/ablab/spades)
 - **Unicycler** - [GitHub](https://github.com/rrwick/Unicycler)
+- **QUAST** - [GitHub](https://github.com/ablab/quast)
+- **Matplotlib** - [Download](https://matplotlib.org/stable/install/index.html)
 
 The pipeline currently uses 4 specific genomes, but these can be changed to any other genomes by modifying the `accession` variable. 
 
