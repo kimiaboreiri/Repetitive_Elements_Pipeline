@@ -52,7 +52,7 @@ def generate_and_insert_repeats():
             genomelength = f.read() #get length
             if genomelength < mingenomelength: #get shortest genome
                 mingenomelength = genomelength
-    for n in range(len(num_insertions)): #insert based on number of insertions
+    for n in range(len(num_insertions)+1): #insert based on number of insertions
         ip.append(random.randint(0,mingenomelength)) #generate numbers that don't exceed the shortest genome
 
     for file in os.listdir("Genomes"): #loop through the genomes
@@ -66,6 +66,7 @@ def generate_and_insert_repeats():
                 mod_genome = genome
                 for i in range(count):
                     insertion_point = random.randint(0, len(mod_genome)) #randomly select a point in the genome to insert the repetitive element
+                    #insertion_point = ip[i] #iterate through the predetermined list of random insertion points based on the number of repeats
                     mod_genome = mod_genome[:insertion_point] + sequence + mod_genome[insertion_point:]
                 output_filename = f"{accession}_{motif_name}_{count}.fna"
                 with open(f"Genomes/{output_filename}", "w") as out_f:
