@@ -45,6 +45,15 @@ def generate_and_insert_repeats():
 
     num_insertions = [2, 3, 4, 5] #number of insertions to make
 
+    ip = [] #list of insertion points
+    mingenomelength = 1000000000000 #1 trillion, arbitrary maximum
+    for m in os.listdir("Genomes"): #loop through files
+        with open("Genomes/{}".format(m), "r") as f: #open files
+            genomelength = f.read() #get length
+            if genomelength < mingenomelength: #get shortest genome
+                mingenomelength = genomelength
+    for n in range(len(num_insertions)): #insert based on number of insertions
+        ip.append(random.randint(0,mingenomelength)) #generate numbers that don't exceed the shortest genome
 
     for file in os.listdir("Genomes"): #loop through the genomes
         with open(f"Genomes/{file}", "r") as f:
