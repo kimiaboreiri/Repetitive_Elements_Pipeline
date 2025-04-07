@@ -155,6 +155,8 @@ def run_unicycler():
         subprocess.run(["unicycler", "-1", fq1_files_path, "-2", fq2_files_path, "-o", outdir1])
         print(f"unicycler finished")
 
+
+# Kimia's Code - Installing and running QUAST
 def install_conda_and_quast():
     install_dir = "home/project3/quast/"
     miniconda_dir = miniconda_url = "https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh"
@@ -163,7 +165,7 @@ def install_conda_and_quast():
     os.makedir(instal_dir, exist_ok=True)
 
     #Downloadthe Miniconda
-    sunprocess.run(["wget, "-p", install_dir, miniconda_url])
+    subprocess.run(["wget, "-p", install_dir, miniconda_url])
 
     #conda environment
     subprocess.run([f"{install_dir}/miniconda3/bin/conda", "init", "bash"])
@@ -182,13 +184,6 @@ def install_conda_and_quast():
     #install quast
     subprocess.run([f"{install_dir}/miniconda3/bin/conda", "run", "-n", "compbio", "install", "-c", "bioconda", "quast", "-y"])
     print("Installation complete")
-                    
-
-
-
-    
-
-
 
 
 # Call the functions in order
