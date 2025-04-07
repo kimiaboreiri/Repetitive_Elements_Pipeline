@@ -49,7 +49,8 @@ def generate_and_insert_repeats():
     mingenomelength = 1000000000000 #1 trillion, arbitrary maximum
     for m in os.listdir("Genomes"): #loop through files
         with open("Genomes/{}".format(m), "r") as f: #open files
-            genomelength = f.read() #get length
+            bases = f.read() #get length
+            genomelength = len(bases)
             if genomelength < mingenomelength: #get shortest genome
                 mingenomelength = genomelength
     for n in range(len(num_insertions)+1): #insert based on number of insertions
