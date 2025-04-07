@@ -44,6 +44,8 @@ def generate_and_insert_repeats():
             f.write(seq2)
         os.chdir("..") #move back to the original directory
 
+    # Create a dictionary of motifs
+    motifs = { "motif1": seq, "motif2": seq2} 
     
     num_insertions = [2, 3, 4, 5] #number of insertions to make
 
