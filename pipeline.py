@@ -101,12 +101,14 @@ def run_art():
 # Kimia's Code - Running SPAdes and Unicycler
 def run_spades():
     #directory to input files
-    input_dir = "/home/project3/artgens"
+    input_dir = "/artgens"
 
     # SPAdes Run 
     #making output file
-    output = "/home/project3/spades_output"
-    os.makedirs(output, exist_ok=True)
+    if not os.path.isdir("Spades_Output"): #make a directory to store SPAdes output if it doesn't already exist 
+        os.system("mkdir Spades_Output") #create directory if it doesn't exist
+    os.chdir("Spades_Output") #move to that directory
+
 
     #read1 files in input directory 
     fq_files_read1 = []
@@ -123,22 +125,29 @@ def run_spades():
 
         #name for output
         base = fq1.replace('1.fq', '')
-        outdir = os.path.join(output, base)
-        os.makedirs(outdir, exist_ok=True)
+        # outdir = os.path.join(output, base)
+        # os.makedirs(outdir, exist_ok=True)
 
-        #run SPAdes
-        subprocess.run(["spades.py", "-1", fq1_path, "-2", fq2_path, "-o", outdir])
-        print(f"finish:{fq1} and {fq2} output in {outdir}")
+        #run SPAdes with 2 threads
+        os.system(f"spades.py -t 2 --only-assembler -1 {fq1_path} -2 {fq2_path} -o Spades_Output") # Hillary's way 
+        '''
+        os.system("spades.py -t 2 --only-assembler -1 {0} -2 {1} -o Spades_Output".format(fq1_path, fq2_path)) # Josh's way 
+        subprocess.run(["spades.py", "-1", fq1_path, "-2", fq2_path, "-o", "Spades_Output"]) # Kimia's way 
+        # print(f"finish:{fq1} and {fq2} output in {outdir}")
+        '''
+    os.chdir('..') #move back to orginal direcotry 
 
-def run_unicycler():
+def run_unicycler(): # MAKE CHANGES TO THIS FUNCTION 
     # Unicycler Run 
 
-    #making output file
-    output_dir = "/home/project3/unicycler_output"
-    os.makedirs(output_dir, exist_ok=True)
-
     #directory to input files
-    input_dir = "/home/project3/artgens"
+    input_dir = "/artgens"
+
+    #making output directory 
+    if not os.path.isdir("Unicycler_Output"): #make a directory to store SPAdes output if it doesn't already exist 
+        os.system("mkdir Unicycler_Output") #create directory if it doesn't exist
+    os.chdir("Unicycler_Output") #move to that directory
+
 
     #forward read path
     fq1_files =[]
@@ -157,7 +166,7 @@ def run_unicycler():
         os.makedirs(outdir1, exist_ok=True)
 
         #running unicycler
-        subprocess.run(["unicycler", "-1", fq1_files_path, "-2", fq2_files_path, "-o", outdir1])
+        os.system(f"unicycler -t 2  -1 {fq1_files_path} -2 {fq2_files_path} -o Unicycler_Output")
         print(f"unicycler finished")
 
 
