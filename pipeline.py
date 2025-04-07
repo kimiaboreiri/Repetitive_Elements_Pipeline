@@ -155,6 +155,42 @@ def run_unicycler():
         subprocess.run(["unicycler", "-1", fq1_files_path, "-2", fq2_files_path, "-o", outdir1])
         print(f"unicycler finished")
 
+def install_conda_and_quast():
+    install_dir = "home/project3/quast/"
+    miniconda_dir = miniconda_url = "https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh"
+    miniconda_script = os.path.join(install_dir, "Miniconda3-latest-Linux-x86_64.sh")
+
+    os.makedir(instal_dir, exist_ok=True)
+
+    #Downloadthe Miniconda
+    sunprocess.run(["wget, "-p", install_dir, miniconda_url])
+
+    #conda environment
+    subprocess.run([f"{install_dir}/miniconda3/bin/conda", "init", "bash"])
+    subprocess.run([f"{install_dir}/miniconda3/bin/conda", "config", "--add", "channels", "defaults"])
+    subprocess.run([f"{install_dir}/miniconda3/bin/conda", "config", "--add", "channels", "bioconda"])
+    subprocess.run([f"{install_dir}/miniconda3/bin/conda", "config", "--add", "channels", "conda-forge"])
+    subprocess.run([f"{install_dir}/miniconda3/bin/conda", "update", "conda", "-y"])
+
+
+    #update conda
+    subprocess.run([f"{install_dir}/miniconda3/bin/conda", "update", "conda", "-y"])
+
+    #create environment
+    subprocess.run([f"{install_dir}/miniconda3/bin/conda", "create", "-n", "compbio", "python=3.9", "-y"])
+
+    #install quast
+    subprocess.run([f"{install_dir}/miniconda3/bin/conda", "run", "-n", "compbio", "install", "-c", "bioconda", "quast", "-y"])
+    print("Installation complete")
+                    
+
+
+
+    
+
+
+
+
 # Call the functions in order
 if __name__ == "__main__":
     download_genomes()
@@ -162,4 +198,5 @@ if __name__ == "__main__":
     run_art()
     run_spades()
     run_unicycler()
+    install_conda_and_quast()
 
