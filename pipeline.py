@@ -208,5 +208,3 @@ if __name__ == "__main__":
     run_spades()
     run_unicycler()
     install_conda_and_quast()
-
-
