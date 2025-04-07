@@ -162,10 +162,10 @@ def install_conda_and_quast():
     miniconda_dir = miniconda_url = "https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh"
     miniconda_script = os.path.join(install_dir, "Miniconda3-latest-Linux-x86_64.sh")
 
-    os.makedir(instal_dir, exist_ok=True)
+    os.makedirs(install_dir, exist_ok=True)
 
     #Downloadthe Miniconda
-    subprocess.run(["wget, "-p", install_dir, miniconda_url])
+    subprocess.run(["wget", "-p", install_dir, miniconda_url])
 
     #conda environment
     subprocess.run([f"{install_dir}/miniconda3/bin/conda", "init", "bash"])
