@@ -34,15 +34,17 @@ def generate_and_insert_repeats():
     motif2 = random.choices(bases, k=500) #500bp random sequence
     seq2 = "".join(motif2) #join the bases together to make a string
 
-    # Write the repetitive elements to files - might be necessary/helpful to see the sequences for future analysis 
-    with open("motif1.txt", "w") as f:
-        f.write(seq)
-    with open("motif2.txt", "w") as f:
-        f.write(seq2)
+    if not os.path.isdir("Motifs"): #make a directory to store the motifs if it doesn't already exist 
+        os.system("mkdir Motifs")
+        os.chdir("Motifs") #move to that directory
+        # Write the repetitive elements to files - might be necessary/helpful to see the sequences for future analysis 
+        with open("motif1.txt", "w") as f:
+            f.write(seq)
+        with open("motif2.txt", "w") as f:
+            f.write(seq2)
+        os.chdir("..") #move back to the original directory
 
-    motifs = { 'motif1': seq, 'motif2': seq2 } #dictionary of the motifs
-
-
+    
     num_insertions = [2, 3, 4, 5] #number of insertions to make
 
     ip = [] #list of insertion points
