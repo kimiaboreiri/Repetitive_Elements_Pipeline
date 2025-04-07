@@ -65,8 +65,8 @@ def generate_and_insert_repeats():
             for count in num_insertions: #loop through the number of insertions
                 mod_genome = genome
                 for i in range(count):
-                    insertion_point = random.randint(0, len(mod_genome)) #randomly select a point in the genome to insert the repetitive element
-                    #insertion_point = ip[i] #iterate through the predetermined list of random insertion points based on the number of repeats
+                    #insertion_point = random.randint(0, len(mod_genome)) #randomly select a point in the genome to insert the repetitive element
+                    insertion_point = ip[i] #iterate through the predetermined list of random insertion points based on the number of repeats
                     mod_genome = mod_genome[:insertion_point] + sequence + mod_genome[insertion_point:]
                 output_filename = f"{accession}_{motif_name}_{count}.fna"
                 with open(f"Genomes/{output_filename}", "w") as out_f:
