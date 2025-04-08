@@ -46,8 +46,15 @@ def generate_and_insert_repeats():
             f.write(seq2)
         os.chdir("..") #move back to the original directory
 
+    
+    # Create a directory to store the modified genomes 
+    modified_dir = "Modified_Genomes"
+    if not os.path.isdir(modified_dir): #make a directory to store modified genomes if it doesn't already exist
+        os.system(f"mkdir {modified_dir} ") #create directory if it doesn't exist
+    
+
     # Create a dictionary of motifs
-    motifs = { "motif1": seq, "motif2": seq2} 
+    motifs = {"motif1": seq, "motif2": seq2} 
     
     num_insertions = [2, 3, 4, 5] #number of insertions to make
 
@@ -59,8 +66,8 @@ def generate_and_insert_repeats():
             genomelength = len(dat)
             if genomelength < mingenomelength: #get shortest genome
                 mingenomelength = genomelength
-    for n in range(len(num_insertions)+1): #insert based on number of insertions
-        ip.append(random.randint(0,mingenomelength)) #generate numbers that don't exceed the shortest genome
+        for n in range(len(num_insertions)+1): #insert based on number of insertions
+            ip.append(random.randint(0,mingenomelength)) #generate numbers that don't exceed the shortest genome
 
     for file in os.listdir("Genomes"): #loop through the genomes
         with open(f"Genomes/{file}", "r") as f:
@@ -72,19 +79,20 @@ def generate_and_insert_repeats():
             for count in num_insertions: #loop through the number of insertions
                 mod_genome = genome
                 for i in range(count):
-                    #insertion_point = random.randint(0, len(mod_genome)) #randomly select a point in the genome to insert the repetitive element
                     insertion_point = ip[i] #iterate through the predetermined list of random insertion points based on the number of repeats
                     mod_genome = mod_genome[:insertion_point] + sequence + mod_genome[insertion_point:]
                 output_filename = f"{accession}_{motif_name}_{count}.fna"
-                with open(f"Genomes/{output_filename}", "w") as out_f:
+                
+                with open(f"{modified_dir}/{output_filename}", "w") as out_f:
                     out_f.write(mod_genome)
+
 
 
 # Joshua's Code - Running ART (Artificially Simulated Genomes)
 def run_art():
     #original genomes list
     genomes = []
-    for file in os.listdir("Genomes"):
+    for file in os.listdir("Modified_Genomes"):
         genomes.append(file)
 
     if not os.path.isdir("artgens"): #directory for simulated genomes
@@ -97,13 +105,13 @@ def run_art():
             out = str(gen.split("_")[0]) + "_" + str(gen.split("_")[1]) + "_" + str(depth)
             #art flags: -p = paired ends, -na = don't output alignment file, -i = input, -l = read length, -f = fold coverage, -o = output prefix, -m = mean fragment length, -s = standard deviation
             if not os.path.isfile("{}.fq".format(out)):
-                os.system("art_illumina -p -na -i ../Genomes/{0} -l 151 -m 200 -s 10 -f {1} -o {2}".format(gen,depth,out))
+                os.system("art_illumina -p -na -i ../Modified_Genomes/{0} -l 151 -m 200 -s 10 -f {1} -o {2}".format(gen,depth,out))
 
 
 # Kimia's Code - Running SPAdes and Unicycler
 def run_spades():
     #directory to input files
-    input_dir = "/artgens"
+    input_dir = "artgens"
 
     # SPAdes Run 
     #making output file
@@ -114,7 +122,7 @@ def run_spades():
 
     #read1 files in input directory 
     fq_files_read1 = []
-    for f in os.listdir(input_dir):
+    for f in os.listdir(f"../{input_dir}"):
         if f.endswith('1.fq'):
             fq_files_read1.append(f)
 
@@ -122,16 +130,16 @@ def run_spades():
     for fq1 in fq_files_read1:
         fq2 = fq1.replace('1.fq', '2.fq')
 
-        fq1_path = os.path.join(input_dir, fq1)
-        fq2_path = os.path.join(input_dir, fq2)
+        fq1_path = f"../{input_dir}/{fq1}"
+        fq2_path = f"../{input_dir}/{fq2}"
 
         #name for output
         base = fq1.replace('1.fq', '')
-        # outdir = os.path.join(output, base)
-        # os.makedirs(outdir, exist_ok=True)
-
+        outdir = f"{base}"
+        os.system(f'mkdir {outdir}') #create directory for each output
+       
         #run SPAdes with 2 threads
-        os.system(f"spades.py -t 2 --only-assembler -1 {fq1_path} -2 {fq2_path} -o Spades_Output") # Hillary's way 
+        os.system(f"spades.py -t 2 --only-assembler -1 {fq1_path} -2 {fq2_path} -o {outdir}") # Hillary's way 
         '''
         os.system("spades.py -t 2 --only-assembler -1 {0} -2 {1} -o Spades_Output".format(fq1_path, fq2_path)) # Josh's way 
         subprocess.run(["spades.py", "-1", fq1_path, "-2", fq2_path, "-o", "Spades_Output"]) # Kimia's way 
@@ -143,7 +151,7 @@ def run_unicycler(): # MAKE CHANGES TO THIS FUNCTION
     # Unicycler Run 
 
     #directory to input files
-    input_dir = "/artgens"
+    input_dir = "artgens"
 
     #making output directory 
     if not os.path.isdir("Unicycler_Output"): #make a directory to store SPAdes output if it doesn't already exist 
@@ -160,15 +168,16 @@ def run_unicycler(): # MAKE CHANGES TO THIS FUNCTION
     for fq1 in fq1_files:
         fq2 = fq1.replace('1.fq', '2.fq')
 
-        fq1_files_path = os.path.join(input_dir, fq1)
-        fq2_files_path = os.path.join(input_dir, fq2)
+        fq1_path_un = f"../{input_dir}/{fq1}"
+        fq2_path_un = f"../{input_dir}/{fq2}"
 
         base1 = fq1.replace('1.fq', '')
-        outdir1 = os.path.join(output_dir, base1)
-        os.makedirs(outdir1, exist_ok=True)
+        outdir1 = f"{base1}"
+        os.system(f'mkdir {outdir1}') #create directory for each output
+    
 
         #running unicycler
-        os.system(f"unicycler -t 2  -1 {fq1_files_path} -2 {fq2_files_path} -o Unicycler_Output")
+        os.system(f"unicycler -t 2  -1 {fq1_path_un} -2 {fq2_path_un} -o {outdir1}")
         print(f"unicycler finished")
 
 
