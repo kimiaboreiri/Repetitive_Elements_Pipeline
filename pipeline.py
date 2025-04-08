@@ -52,7 +52,6 @@ def generate_and_insert_repeats():
     if not os.path.isdir(modified_dir): #make a directory to store modified genomes if it doesn't already exist
         os.system(f"mkdir {modified_dir} ") #create directory if it doesn't exist
     
-
     # Create a dictionary of motifs
     motifs = {"motif1": seq, "motif2": seq2} 
     
@@ -66,8 +65,16 @@ def generate_and_insert_repeats():
             genomelength = len(dat)
             if genomelength < mingenomelength: #get shortest genome
                 mingenomelength = genomelength
-        for n in range(len(num_insertions)+1): #insert based on number of insertions
-            ip.append(random.randint(0,mingenomelength)) #generate numbers that don't exceed the shortest genome
+    for n in range(len(num_insertions)+1): #insert based on number of insertions
+        ip.append(random.randint(0,mingenomelength)) #generate numbers that don't exceed the shortest genome
+    
+    ip = sorted(ip) #sort the list of insertion points
+    print(ip) #print the list of insertion points
+
+    # Write the insertion points to a file - this is optional but can be helpful for debugging (able to check exact positions where the motifs were inserted)
+    with open("Motifs/ip.txt", "w") as f:
+        for i in ip:
+            f.write(f"{i}\n")
 
     for file in os.listdir("Genomes"): #loop through the genomes
         with open(f"Genomes/{file}", "r") as f:
