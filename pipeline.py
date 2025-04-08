@@ -4,22 +4,24 @@ import random
 
 # Joshua's Code - Downloading Genomes 
 def download_genomes():
-    if not os.path.isdir("Genomes"): #make a directory to store genomes if it doesn't already exist 
-        os.system("mkdir Genomes")
+    if "Genomes" not in os.getcwd(): #if you aren't already in the Genomes folder
+        if not os.path.isdir("Genomes"): #make a directory to store genomes if it doesn't already exist 
+            os.system("mkdir Genomes")
+        os.chdir("Genomes") #move to the Genomes folder
 
     accession = ["GCF_014961145.1","GCF_028532485.1","GCF_021391435.1","GCF_004379335.1"] # genome accession codes 
 
     for x in accession: #loop through accessions
-        if x not in ",".join(os.listdir("Genomes")): #no need to redownload 
+        if x not in ",".join(os.listdir()): #no need to redownload 
             os.system(f"datasets download genome accession {x} --include genome") #download genome from refseq
             os.system("unzip ncbi_dataset.zip") #unzip
             os.system("rm ncbi_dataset.zip") #delete zip file which has generic name to prevent overwrite issues
-            os.system("mv ncbi_dataset/data/GCF*/GCF* Genomes") #extract the genome file and move it to Genomes folder
+            os.system("mv ncbi_dataset/data/GCF*/GCF* .") #extract the genome file and move it to current folder, which should be Genomes
             os.system("rm -rf ncbi_dataset/data") #delete the unzipped folder which has unnecessary extra stuff
             os.system("rm README.md") #delete extra file to avoid asking for overwrite
             os.system("rm md5sum.txt") #delete extra file to avoid asking for overwrite
             os.system("rmdir ncbi_dataset") #remove empty folder
-
+    os.chdir("..") #return to main folder
 
 # Hillary's Code - Generating and Inserting Repeats 
 # This function is still a work in progress and needs more editting 
@@ -53,8 +55,8 @@ def generate_and_insert_repeats():
     mingenomelength = 1000000000000 #1 trillion, arbitrary maximum
     for m in os.listdir("Genomes"): #loop through files
         with open("Genomes/{}".format(m), "r") as f: #open files
-            bases = f.read() #get length
-            genomelength = len(bases)
+            dat = f.read() #get length
+            genomelength = len(dat)
             if genomelength < mingenomelength: #get shortest genome
                 mingenomelength = genomelength
     for n in range(len(num_insertions)+1): #insert based on number of insertions
@@ -208,4 +210,3 @@ if __name__ == "__main__":
     run_spades()
     run_unicycler()
     install_conda_and_quast()
-
