@@ -113,7 +113,8 @@ def run_art():
             #art flags: -p = paired ends, -na = don't output alignment file, -i = input, -l = read length, -f = fold coverage, -o = output prefix, -m = mean fragment length, -s = standard deviation
             if not os.path.isfile("{}.fq".format(out)):
                 os.system("art_illumina -p -na -i ../Modified_Genomes/{0} -l 151 -m 200 -s 10 -f {1} -o {2}".format(gen,depth,out))
-
+    os.chdir("..") #move back to the original directory
+    
 
 # Kimia's Code - Running SPAdes and Unicycler
 def run_spades():
