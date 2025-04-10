@@ -36,8 +36,8 @@ The 4 genomes we use by default are:
 
 However, the pipeline can be modified to use any genome. Simply update the `accession` variable in the `download_genomes` function with your desired accession codes.
 
-### Insertion of repetitive elements
-Next, repetitive elements are inserted into the pipeline to create artificial genomes. 
+### Creation and insertion of repetitive elements
+Next, repetitive elements are inserted into the pipeline to create artificial genomes. From a "pool" of nucleotides of "A", "C", "T", and "G", the repetitive element is randomly generated at the specified k-value or base pair length (in our case we had a k-value of 100 and 500). These repetitive elements are stored in a text file called 'motif.txt'. Then, a list of insertion points is randomly generated, and then the repetitive element is inserted either 2 times, 3 times, 4 times, or 5 times. These newly modified genomes are stored in a directory called 'Modified_Genomes'. Each file is named `accession#`_`motif#`_`repeat#`. 
 
 ### Short read simulation
 The artificial genomes are broken apart by ART as it simulates 150 bp paired end short reads from an Illumina sequencer. It does this at a depth of 10 and 100, but these values can be modified by changing the `depth` variable in the for loop of the `run_art` function. An example of a modified for loop that increments depth by 10 from 10 to 100 is available in the comments above the current for loop. 
