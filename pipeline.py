@@ -251,7 +251,7 @@ def run_quast():
            break
     #to make sure code can find files    
     if reference_path is None:
-        print("referenec not found")
+        print("reference not found")
         return
     #find reads from ART
     #finding matching paired-end read files
@@ -271,7 +271,7 @@ def run_quast():
     #quast
     quast_run = (
         f"quast.py {spades} {unicycler} "  #spades and unicycler assemblis
-        f"-r {reference_path} "      #referenec file
+        f"-r {reference_path} "      #reference file
         f"-1 {read1} -2 {read2} "    #art reads files
         f"-l SPAdes,Unicycler " #label with spades and unicycler
         f"-o {quast_output_dir}" #output
