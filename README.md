@@ -53,4 +53,25 @@ The call to ART uses the following flags:
 * `-s` is the standard deviation, set to 10
 
 ### Assembly
-The short reads are then reassembled by SPAdes and Unicycler to compare their ability to handle repetitive elements.
+The short reads are then reassembled by SPAdes and Unicycler to compare their ability to handle repetitive elements. Both SPAdes and Unicycler take as input the paired-end short reads simulated by ART. For each genome and each sequencing depth (e.g., 10x and 100X) and both tools are run on the same sets of reads to allow a direct comparision.
+
+## SPAdes
+In this pipeline, SPAdes reconstructs the original genome from the paired-end short reads simulated by ART. The assembled genome is saved in a folder specific to each genome and coverage depth.
+
+The call SPAdes uses the following flags:
+* `-1` is the forward read file (R1)
+* `-2` is the reverse read file (R2)
+* `-t` sets the number of threads used
+* `-o` is the output directory
+
+## Unicycler
+In this pipeline, unicycler is run in short-read mode using paired-end reads simulated by ART and assembled genome is saved in a folder specific to each genome and coverage depth.
+
+The call to Unicycler uses the following flags:
+* `-1` is the forward read file (R1)
+* `-2` is the reverse read file (R2)
+* `-t` sets the number of threads used
+* `-o` is the output directory
+
+
+
