@@ -129,20 +129,20 @@ def run_spades():
 
 
     #read1 files in input directory 
-    fq_files_read1 = []
+    fq_files_read1 = []   #list to store forward reads (ending in 1.fq)
     for f in os.listdir(f"../{input_dir}"):
         if f.endswith('1.fq'):
             fq_files_read1.append(f)
 
     #run SPAdes for each file
-    for fq1 in fq_files_read1:
-        fq2 = fq1.replace('1.fq', '2.fq')
+    for fq1 in fq_files_read1:     
+        fq2 = fq1.replace('1.fq', '2.fq') #find matching reverse read
 
         fq1_path = f"../{input_dir}/{fq1}"
         fq2_path = f"../{input_dir}/{fq2}"
 
         #name for output
-        base = fq1.replace('1.fq', '')
+        base = fq1.replace('1.fq', '')  #create base name output
         outdir = f"{base}"
         os.system(f'mkdir {outdir}') #create directory for each output
        
@@ -168,57 +168,117 @@ def run_unicycler(): # MAKE CHANGES TO THIS FUNCTION
 
 
     #forward read path
-    fq1_files =[]
+    fq1_files =[] #list to store forward reads
     for f in os.listdir(input_dir):
         if f.endswith('1.fq'):
             fq1_files.append(f)
 
     for fq1 in fq1_files:
-        fq2 = fq1.replace('1.fq', '2.fq')
+        fq2 = fq1.replace('1.fq', '2.fq') #find and match reverse read
 
         fq1_path_un = f"../{input_dir}/{fq1}"
         fq2_path_un = f"../{input_dir}/{fq2}"
 
-        base1 = fq1.replace('1.fq', '')
+        base1 = fq1.replace('1.fq', '')  #output folder base name
         outdir1 = f"{base1}"
         os.system(f'mkdir {outdir1}') #create directory for each output
     
 
         #running unicycler
-        os.system(f"unicycler -t 2  -1 {fq1_path_un} -2 {fq2_path_un} -o {outdir1}")
+        os.system(f"unicycler -t 2  -1 {fq1_path_un} -2 {fq2_path_un} -o {outdir1}") #-1 forward read #-2 reverse read  #-o output
         print(f"unicycler finished")
 
 
 # Kimia's Code - Installing and running QUAST
 def install_conda_and_quast():
-    install_dir = "home/project3/quast/"
-    miniconda_dir = miniconda_url = "https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh"
-    miniconda_script = os.path.join(install_dir, "Miniconda3-latest-Linux-x86_64.sh")
+    current_dir = os.getcwd()  #get thecurrent working directory
+    install_dir = os.path.join(current_dir, "quast_install") #the path where miniconda will be installed
+    miniconda_path = os.path.join(install_dir, "miniconda3")  #path to miniconda installation
+    conda_bin = os.path.join(miniconda_path, "bin", "conda") #path to conda binary
+    env_name = "compbio"  #name of conda environment to be created
+    python_version = "3.9"
 
-    os.makedirs(install_dir, exist_ok=True)
+    #If conda is already installed, skip installation
+    if not os.path.exist(conda_bin):
+        os.makedirs(install_dir, exist_ok=True) #create installation sirectory if not exist
+        miniconda_url = "https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh"
+        miniconda_script = os.path.join(install_dir, "Miniconda3.sh")
+        #download miniconda
+        os.system(f"wget -O {miniconda_script} {miniconda_url}")    #-O save file
+        #install miniconda
+        os.system(f"bash -O {miniconda_script} -b -p {miniconda_pathl}") #-b auto accept license  
+                                                                       #-P install miniconda to a specific directory
+        
 
-    #Downloadthe Miniconda
-    subprocess.run(["wget", "-p", install_dir, miniconda_url])
+    #check if the environment already exists
+    env_check = os.popen(f"{conda_bin} env list").read()        #popen runs a shell command and gives back the output
 
-    #conda environment
-    subprocess.run([f"{install_dir}/miniconda3/bin/conda", "init", "bash"])
-    subprocess.run([f"{install_dir}/miniconda3/bin/conda", "config", "--add", "channels", "defaults"])
-    subprocess.run([f"{install_dir}/miniconda3/bin/conda", "config", "--add", "channels", "bioconda"])
-    subprocess.run([f"{install_dir}/miniconda3/bin/conda", "config", "--add", "channels", "conda-forge"])
-    subprocess.run([f"{install_dir}/miniconda3/bin/conda", "update", "conda", "-y"])
+    if env_name in env_check:
+
+    else:
+        os.system(f"{conda_bin} init bash") #installation conda in bash
+        os.system(f"{conda_bin} config --add channels defaults")
+        os.system(f"{conda_bin} config --add channels bioconda")
+        os.system(f"{conda_bin} config --add channels conda-forge")
+        os.system(f"{conda_bin} update conda -y") #update conda
+        os.system(f"{conda_bin} create -n {env_name} pyhton={python_version} -y") #create environment
+        
+
+    #Install quast
+    os.system(f"{conda_bin} run -n {env_name} conda intall -c bioconda quast -y")
+  
+##running quast
+#need edit to make sure path directory is working
+def run_quast():
+    base_dir = os.getcwd()  #current directory
+    #define the folder where assemblies are stored  
+    spades_dir = os.path.join(base_dir, "spades_output") #spades output folder
+    unicycler_dir = os.path.join(base_dir, "unicycler_output")  #unicycler output folder
+    reference_dir = os.path.join(base_dir, "reference")    #reference output folder
+    artgens_dir = os.path.join(base_dir, "artgens")      #ART reads folder
+    quast_output_dir = os.path.join(base_dir, "quast_output")  #output folder for quast
 
 
-    #update conda
-    subprocess.run([f"{install_dir}/miniconda3/bin/conda", "update", "conda", "-y"])
+   #get scaffold files
+    spades_assembly = os.path.join(spades_dir, "scaffolds.fasta")  #path to spades assembly
+    unicycler_assembly = os.path.join(unicycler_dir, "scaffolds.fasta") #path to unicycler assembly
 
-    #create environment
-    subprocess.run([f"{install_dir}/miniconda3/bin/conda", "create", "-n", "compbio", "python=3.9", "-y"])
+   #finding the reference files
+   reference_path = None
+   for file in os.listdir(reference_dir):
+       if file.endswith(".fna"):  #find reference file ending in .fna
+           reference_path = os.path.join(reference_dir, file)
+           break
+    #to make sure code can find files    
+    if reference_path is None:
+        print("referenec not found")
+        return
+    #find reads from ART
+    #finding matching paired-end read files
+    read1, read2 = None, None
+    for f in os.listdir(reads_dir):
+        if f.endswith("1.fq") and ("1" in f.split("_)[-1]):  #look for read1
+            read1_files = os.path.join(reads_dir, f)
+            read2_files = os.path.join(reads_dir, f.replace(1.fq", "2.fq")) #match with read2
+            if os.path.exists(read2_files):
+            read1 = read1_files
+            read2 = read2_files
+            break
+        
 
-    #install quast
-    subprocess.run([f"{install_dir}/miniconda3/bin/conda", "run", "-n", "compbio", "install", "-c", "bioconda", "quast", "-y"])
-    print("Installation complete")
+    #make output directory 
+    os.makedirs(quast_output_dir, exist_ok = True)
+    #quast
+    quast_run = (
+        f"quast.py {spades} {unicycler} "  #spades and unicycler assemblis
+        f"-r {reference_path} "      #referenec file
+        f"-1 {read1} -2 {read2} "    #art reads files
+        f"-l SPAdes,Unicycler " #label with spades and unicycler
+        f"-o {quast_output_dir}" #output
+    )
 
-
+os.system(qust_run)
+  
 # Call the functions in order
 if __name__ == "__main__":
     download_genomes()
@@ -227,3 +287,4 @@ if __name__ == "__main__":
     run_spades()
     run_unicycler()
     install_conda_and_quast()
+    run_quast()
