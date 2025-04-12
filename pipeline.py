@@ -159,7 +159,7 @@ def run_unicycler(): # MAKE CHANGES TO THIS FUNCTION
     # Unicycler Run 
 
     #directory to input files
-    input_dir = "artgens"
+    input_dir = os.path.abspath("../artgens") #convert relative path to full absolute path
 
     #making output directory 
     if not os.path.isdir("Unicycler_Output"): #make a directory to store SPAdes output if it doesn't already exist 
@@ -176,8 +176,8 @@ def run_unicycler(): # MAKE CHANGES TO THIS FUNCTION
     for fq1 in fq1_files:
         fq2 = fq1.replace('1.fq', '2.fq') #find and match reverse read
 
-        fq1_path_un = f"../{input_dir}/{fq1}"
-        fq2_path_un = f"../{input_dir}/{fq2}"
+        fq1_path_un = os.path.join(input_dir,fq1)
+        fq2_path_un = os.path.join(input_dir,fq2)
 
         base1 = fq1.replace('1.fq', '')  #output folder base name
         outdir1 = f"{base1}"
@@ -199,14 +199,14 @@ def install_conda_and_quast():
     python_version = "3.9"
 
     #If conda is already installed, skip installation
-    if not os.path.exist(conda_bin):
+    if not os.path.exists(conda_bin):
         os.makedirs(install_dir, exist_ok=True) #create installation sirectory if not exist
         miniconda_url = "https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh"
         miniconda_script = os.path.join(install_dir, "Miniconda3.sh")
         #download miniconda
         os.system(f"wget -O {miniconda_script} {miniconda_url}")    #-O save file
         #install miniconda
-        os.system(f"bash -O {miniconda_script} -b -p {miniconda_pathl}") #-b auto accept license  
+        os.system(f"bash {miniconda_script} -b -p {miniconda_path}") #-b auto accept license  
                                                                        #-P install miniconda to a specific directory
         
 
@@ -214,18 +214,18 @@ def install_conda_and_quast():
     env_check = os.popen(f"{conda_bin} env list").read()        #popen runs a shell command and gives back the output
 
     if env_name in env_check:
-
+        print("conda env already exist")
     else:
         os.system(f"{conda_bin} init bash") #installation conda in bash
         os.system(f"{conda_bin} config --add channels defaults")
         os.system(f"{conda_bin} config --add channels bioconda")
         os.system(f"{conda_bin} config --add channels conda-forge")
         os.system(f"{conda_bin} update conda -y") #update conda
-        os.system(f"{conda_bin} create -n {env_name} pyhton={python_version} -y") #create environment
+        os.system(f"{conda_bin} create -n {env_name} python={python_version} -y") #create environment
         
 
     #Install quast
-    os.system(f"{conda_bin} run -n {env_name} conda intall -c bioconda quast -y")
+    os.system(f"{conda_bin} run -n {env_name} conda install -c bioconda quast -y")
   
 ##running quast
 #need edit to make sure path directory is working
@@ -244,8 +244,8 @@ def run_quast():
     unicycler_assembly = os.path.join(unicycler_dir, "scaffolds.fasta") #path to unicycler assembly
 
    #finding the reference files
-   reference_path = None
-   for file in os.listdir(reference_dir):
+    reference_path = None
+    for file in os.listdir(reference_dir):
        if file.endswith(".fna"):  #find reference file ending in .fna
            reference_path = os.path.join(reference_dir, file)
            break
@@ -256,28 +256,28 @@ def run_quast():
     #find reads from ART
     #finding matching paired-end read files
     read1, read2 = None, None
-    for f in os.listdir(reads_dir):
-        if f.endswith("1.fq") and ("1" in f.split("_)[-1]):  #look for read1
-            read1_files = os.path.join(reads_dir, f)
-            read2_files = os.path.join(reads_dir, f.replace(1.fq", "2.fq")) #match with read2
+    for f in os.listdir(artgens_dir):
+        if f.endswith("1.fq") and ("1" in f.split("_")[-1]):   #look for read1
+            read1_files = os.path.join(artgens_dir, f)
+            read2_files = os.path.join(artgens_dir, f.replace("1.fq", "2.fq")) #match with read2
             if os.path.exists(read2_files):
-            read1 = read1_files
-            read2 = read2_files
-            break
+                read1 = read1_files
+                read2 = read2_files
+                break
         
 
     #make output directory 
     os.makedirs(quast_output_dir, exist_ok = True)
     #quast
     quast_run = (
-        f"quast.py {spades} {unicycler} "  #spades and unicycler assemblis
+        f"quast.py {spades_dir} {unicycler_dir} "  #spades and unicycler assemblis
         f"-r {reference_path} "      #reference file
         f"-1 {read1} -2 {read2} "    #art reads files
         f"-l SPAdes,Unicycler " #label with spades and unicycler
         f"-o {quast_output_dir}" #output
     )
-
-os.system(qust_run)
+    print(quast_run)
+    os.system(quast_run)
   
 # Call the functions in order
 if __name__ == "__main__":
