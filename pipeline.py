@@ -97,7 +97,7 @@ def generate_and_insert_repeats():
 
 # Joshua's Code - Running ART (Artificially Simulated Genomes)
 def run_art():
-    #original genomes list
+    #modified genomes list
     genomes = []
     for file in os.listdir("Modified_Genomes"):
         genomes.append(file)
@@ -109,7 +109,7 @@ def run_art():
     for gen in genomes:
         #for depth in range(10,110,10): #increase depth from 10 to 100 in increments of 10
         for depth in [10,100]: #runs art with depth of 10 and 100
-            out = str(gen.split("_")[0]) + "_" + str(gen.split("_")[1]) + "_" + str(depth)
+            out = str(gen.split(".")[0]) + "_" + str(depth)
             #art flags: -p = paired ends, -na = don't output alignment file, -i = input, -l = read length, -f = fold coverage, -o = output prefix, -m = mean fragment length, -s = standard deviation
             if not os.path.isfile("{}.fq".format(out)):
                 os.system("art_illumina -p -na -i ../Modified_Genomes/{0} -l 151 -m 200 -s 10 -f {1} -o {2}".format(gen,depth,out))
