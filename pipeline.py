@@ -26,72 +26,73 @@ def download_genomes():
 # Hillary's Code - Generating and Inserting Repeats 
 # This function is still a work in progress and needs more editting 
 def generate_and_insert_repeats():
-    bases = ["A", "C", "G", "T"] #nucleotide bases
+    if not os.path.isfile("Motifs/ip.txt"):
+        bases = ["A", "C", "G", "T"] #nucleotide bases
 
-    # 100 BP random repetitive element 
-    motif1 = random.choices(bases, k=100) #100bp random sequence
-    seq = "".join(motif1) #join the bases together to make a string
+        # 100 BP random repetitive element 
+        motif1 = random.choices(bases, k=100) #100bp random sequence
+        seq = "".join(motif1) #join the bases together to make a string
 
-    # 500 BP random repetitive element
-    motif2 = random.choices(bases, k=500) #500bp random sequence
-    seq2 = "".join(motif2) #join the bases together to make a string
+        # 500 BP random repetitive element
+        motif2 = random.choices(bases, k=500) #500bp random sequence
+        seq2 = "".join(motif2) #join the bases together to make a string
 
-    if not os.path.isdir("Motifs"): #make a directory to store the motifs if it doesn't already exist 
-        os.system("mkdir Motifs")
-        os.chdir("Motifs") #move to that directory
-        # Write the repetitive elements to files - might be necessary/helpful to see the sequences for future analysis 
-        with open("motif1.txt", "w") as f:
-            f.write(seq)
-        with open("motif2.txt", "w") as f:
-            f.write(seq2)
-        os.chdir("..") #move back to the original directory
+        if not os.path.isdir("Motifs"): #make a directory to store the motifs if it doesn't already exist 
+            os.system("mkdir Motifs")
+            os.chdir("Motifs") #move to that directory
+            # Write the repetitive elements to files - might be necessary/helpful to see the sequences for future analysis 
+            with open("motif1.txt", "w") as f:
+                f.write(seq)
+            with open("motif2.txt", "w") as f:
+                f.write(seq2)
+            os.chdir("..") #move back to the original directory
 
-    
-    # Create a directory to store the modified genomes 
-    modified_dir = "Modified_Genomes"
-    if not os.path.isdir(modified_dir): #make a directory to store modified genomes if it doesn't already exist
-        os.system(f"mkdir {modified_dir} ") #create directory if it doesn't exist
-    
-    # Create a dictionary of motifs
-    motifs = {"motif1": seq, "motif2": seq2} 
-    
-    num_insertions = [2, 3, 4, 5] #number of insertions to make
+        
+        # Create a directory to store the modified genomes 
+        modified_dir = "Modified_Genomes"
+        if not os.path.isdir(modified_dir): #make a directory to store modified genomes if it doesn't already exist
+            os.system(f"mkdir {modified_dir} ") #create directory if it doesn't exist
+        
+        # Create a dictionary of motifs
+        motifs = {"motif1": seq, "motif2": seq2} 
+        
+        num_insertions = [2, 3, 4, 5] #number of insertions to make
 
-    ip = [] #list of insertion points
-    mingenomelength = 1000000000000 #1 trillion, arbitrary maximum
-    for m in os.listdir("Genomes"): #loop through files
-        with open("Genomes/{}".format(m), "r") as f: #open files
-            dat = f.read() #get length
-            genomelength = len(dat)
-            if genomelength < mingenomelength: #get shortest genome
-                mingenomelength = genomelength
-    for n in range(len(num_insertions)+1): #insert based on number of insertions
-        ip.append(random.randint(0,mingenomelength)) #generate numbers that don't exceed the shortest genome
-    
-    ip = sorted(ip) #sort the list of insertion points
-    print(ip) #print the list of insertion points
+        ip = [] #list of insertion points
+        mingenomelength = 1000000000000 #1 trillion, arbitrary maximum
+        for m in os.listdir("Genomes"): #loop through files
+            with open("Genomes/{}".format(m), "r") as f: #open files
+                dat = f.read() #get length
+                genomelength = len(dat)
+                if genomelength < mingenomelength: #get shortest genome
+                    mingenomelength = genomelength
+        for n in range(len(num_insertions)+1): #insert based on number of insertions
+            ip.append(random.randint(0,mingenomelength)) #generate numbers that don't exceed the shortest genome
+        
+        ip = sorted(ip) #sort the list of insertion points
+        print(ip) #print the list of insertion points
 
-    # Write the insertion points to a file - this is optional but can be helpful for debugging (able to check exact positions where the motifs were inserted)
-    with open("Motifs/ip.txt", "w") as f:
-        for i in ip:
-            f.write(f"{i}\n")
+        # Write the insertion points to a file - this is optional but can be helpful for debugging (able to check exact positions where the motifs were inserted)
+        with open("Motifs/ip.txt", "w") as f:
+            for i in ip:
+                f.write(f"{i}\n")
 
-    for file in os.listdir("Genomes"): #loop through the genomes
-        with open(f"Genomes/{file}", "r") as f:
-            genome = f.read()
+        for file in os.listdir("Genomes"): #loop through the genomes
+            with open(f"Genomes/{file}", "r") as f:
+                genome = f.read()
 
-        accession = file.split(".")[0]
+            accession = file.split(".")[0]
 
-        for motif_name, sequence in motifs.items():
-            for count in num_insertions: #loop through the number of insertions
-                mod_genome = genome
-                for i in range(count):
-                    insertion_point = ip[i] #iterate through the predetermined list of random insertion points based on the number of repeats
-                    mod_genome = mod_genome[:insertion_point] + sequence + mod_genome[insertion_point:]
-                output_filename = f"{accession}_{motif_name}_{count}.fna"
-                
-                with open(f"{modified_dir}/{output_filename}", "w") as out_f:
-                    out_f.write(mod_genome)
+            for motif_name, sequence in motifs.items():
+                for count in num_insertions: #loop through the number of insertions
+                    mod_genome = genome
+                    for i in range(count):
+                        insertion_point = ip[i] #iterate through the predetermined list of random insertion points based on the number of repeats
+                        mod_genome = mod_genome[:insertion_point] + sequence + mod_genome[insertion_point:]
+                    output_filename = f"{accession}_{motif_name}_{count}.fna"
+                    
+                    with open(f"{modified_dir}/{output_filename}", "w") as out_f:
+                        out_f.write(mod_genome)
 
 
 
