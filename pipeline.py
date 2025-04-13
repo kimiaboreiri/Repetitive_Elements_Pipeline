@@ -236,8 +236,7 @@ def run_quast():
     #define the folder where assemblies are stored  
     spades_dir = os.path.join(base_dir, "spades_output") #spades output folder
     unicycler_dir = os.path.join(base_dir, "unicycler_output")  #unicycler output folder
-    reference_dir = os.path.join(base_dir, "reference")    #reference output folder
-    artgens_dir = os.path.join(base_dir, "artgens")      #ART reads folder
+    modified_ref_dir = os.path.join(base_dir, "Modified_Genomes")    #reference output folder
     quast_output_dir = os.path.join(base_dir, "quast_output")  #output folder for quast
 
 
@@ -247,26 +246,15 @@ def run_quast():
 
    #finding the reference files
     reference_path = None
-    for file in os.listdir(reference_dir):
-       if file.endswith(".fna"):  #find reference file ending in .fna
-           reference_path = os.path.join(reference_dir, file)
+    for file in os.listdir(modified_ref_dir):
+       if file.endswith(".fna"):  #find modified genome as refrence for quast  #ending in .fna
+           reference_path = os.path.join(modified_ref_dir, file)
            break
     #to make sure code can find files    
     if reference_path is None:
         print("reference not found")
         return
-    #find reads from ART
-    #finding matching paired-end read files
-    read1, read2 = None, None
-    for f in os.listdir(artgens_dir):
-        if f.endswith("1.fq") and ("1" in f.split("_")[-1]):   #look for read1
-            read1_files = os.path.join(artgens_dir, f)
-            read2_files = os.path.join(artgens_dir, f.replace("1.fq", "2.fq")) #match with read2
-            if os.path.exists(read2_files):
-                read1 = read1_files
-                read2 = read2_files
-                break
-        
+
 
     #make output directory 
     os.makedirs(quast_output_dir, exist_ok = True)
@@ -274,8 +262,7 @@ def run_quast():
     quast_run = (
         f"quast.py {spades_dir} {unicycler_dir} "  #spades and unicycler assemblis
         f"-r {reference_path} "      #reference file
-        f"-1 {read1} -2 {read2} "    #art reads files
-        f"-l SPAdes,Unicycler " #label with spades and unicycler
+        f"-l SPAdes,Unicycler "      #label with spades and unicycler
         f"-o {quast_output_dir}" #output
     )
     print(quast_run)
