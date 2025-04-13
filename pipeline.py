@@ -119,42 +119,43 @@ def run_art():
 
 # Kimia's Code - Running SPAdes and Unicycler
 def run_spades():
-    #directory to input files
-    input_dir = "artgens"
+    if not os.path.isdir("Spades_Output"):
+        #directory to input files
+        input_dir = "artgens"
 
-    # SPAdes Run 
-    #making output file
-    if not os.path.isdir("Spades_Output"): #make a directory to store SPAdes output if it doesn't already exist 
-        os.system("mkdir Spades_Output") #create directory if it doesn't exist
-    os.chdir("Spades_Output") #move to that directory
+        # SPAdes Run 
+        #making output file
+        if not os.path.isdir("Spades_Output"): #make a directory to store SPAdes output if it doesn't already exist 
+            os.system("mkdir Spades_Output") #create directory if it doesn't exist
+        os.chdir("Spades_Output") #move to that directory
 
 
-    #read1 files in input directory 
-    fq_files_read1 = []   #list to store forward reads (ending in 1.fq)
-    for f in os.listdir(f"../{input_dir}"):
-        if f.endswith('1.fq'):
-            fq_files_read1.append(f)
+        #read1 files in input directory 
+        fq_files_read1 = []   #list to store forward reads (ending in 1.fq)
+        for f in os.listdir(f"../{input_dir}"):
+            if f.endswith('1.fq'):
+                fq_files_read1.append(f)
 
-    #run SPAdes for each file
-    for fq1 in fq_files_read1:     
-        fq2 = fq1.replace('1.fq', '2.fq') #find matching reverse read
+        #run SPAdes for each file
+        for fq1 in fq_files_read1:     
+            fq2 = fq1.replace('1.fq', '2.fq') #find matching reverse read
 
-        fq1_path = f"../{input_dir}/{fq1}"
-        fq2_path = f"../{input_dir}/{fq2}"
+            fq1_path = f"../{input_dir}/{fq1}"
+            fq2_path = f"../{input_dir}/{fq2}"
 
-        #name for output
-        base = fq1.replace('1.fq', '')  #create base name output
-        outdir = f"{base}"
-        os.system(f'mkdir {outdir}') #create directory for each output
-       
-        #run SPAdes with 2 threads
-        os.system(f"spades.py -t 2 --only-assembler -1 {fq1_path} -2 {fq2_path} -o {outdir}") # Hillary's way 
-        '''
-        os.system("spades.py -t 2 --only-assembler -1 {0} -2 {1} -o Spades_Output".format(fq1_path, fq2_path)) # Josh's way 
-        subprocess.run(["spades.py", "-1", fq1_path, "-2", fq2_path, "-o", "Spades_Output"]) # Kimia's way 
-        # print(f"finish:{fq1} and {fq2} output in {outdir}")
-        '''
-    os.chdir('..') #move back to orginal direcotry 
+            #name for output
+            base = fq1.replace('1.fq', '')  #create base name output
+            outdir = f"{base}"
+            os.system(f'mkdir {outdir}') #create directory for each output
+        
+            #run SPAdes with 2 threads
+            os.system(f"spades.py -t 2 --only-assembler -1 {fq1_path} -2 {fq2_path} -o {outdir}") # Hillary's way 
+            '''
+            os.system("spades.py -t 2 --only-assembler -1 {0} -2 {1} -o Spades_Output".format(fq1_path, fq2_path)) # Josh's way 
+            subprocess.run(["spades.py", "-1", fq1_path, "-2", fq2_path, "-o", "Spades_Output"]) # Kimia's way 
+            # print(f"finish:{fq1} and {fq2} output in {outdir}")
+            '''
+        os.chdir('..') #move back to orginal direcotry 
 
 def run_unicycler(): # MAKE CHANGES TO THIS FUNCTION 
     # Unicycler Run 
